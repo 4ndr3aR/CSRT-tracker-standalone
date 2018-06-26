@@ -15,7 +15,7 @@ using namespace cv;
 
 int main(int argc, char** argv)
 {
-    cv::ocl::setUseOpenCL(false);
+    bool show_images = true;
 
     // show help
     if (argc<2) {
@@ -112,6 +112,8 @@ int main(int argc, char** argv)
     int64 t2 = cv::getTickCount();
     int64 tick_counter = t2 - t1;
 
+    Mat imshow_mat;
+
     // do the tracking
     printf("Start the tracking process, press ESC to quit.\n");
     int frame_idx = 1;
@@ -136,9 +138,14 @@ int main(int argc, char** argv)
             return 0;
         }
 
-        // draw the tracked object and show the image
-        rectangle(frame, roi, Scalar(255, 0, 0), 2, 1);
-        imshow("tracker", frame);
+	if (show_images)
+	{
+		// draw the tracked object and show the image
+		rectangle(frame, roi, Scalar(255, 0, 0), 5, 1);
+
+		resize(frame, imshow_mat, Size(320, 240));
+		imshow("tracker", imshow_mat);
+	}
 
         //quit on ESC button
         if (waitKey(1) == 27)break;

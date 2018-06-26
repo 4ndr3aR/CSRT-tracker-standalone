@@ -25,5 +25,5 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
-	-rm *.o
-	-rm $(TARGET)
+	-rm -f *.o
+	-rm -f $(TARGET)
