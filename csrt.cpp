@@ -15,7 +15,9 @@ using namespace cv;
 
 int main(int argc, char** argv)
 {
-    bool show_images = true;
+    bool show_images   = true;
+    bool save_video    = true;
+    bool resize_imshow = false;
 
     // show help
     if (argc<2) {
@@ -114,6 +116,10 @@ int main(int argc, char** argv)
 
     Mat imshow_mat;
 
+    int frame_width  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+    VideoWriter video_out("/tmp/out.avi", CV_FOURCC('X','2','6','4') , 30, Size(frame_width, frame_height), true);
+
     // do the tracking
     printf("Start the tracking process, press ESC to quit.\n");
     int frame_idx = 1;
@@ -143,9 +149,16 @@ int main(int argc, char** argv)
 		// draw the tracked object and show the image
 		rectangle(frame, roi, Scalar(255, 0, 0), 5, 1);
 
-		resize(frame, imshow_mat, Size(320, 240));
-		imshow("tracker", imshow_mat);
+		if (resize_imshow)
+		{
+			resize(frame, imshow_mat, Size(320, 240));
+			imshow("tracker", imshow_mat);
+		}
+		else
+			imshow("tracker", frame);
 	}
+	if (save_video)
+		video_out.write(frame);
 
         //quit on ESC button
         if (waitKey(1) == 27)break;
