@@ -2,11 +2,17 @@ TARGET = csrt
 
 ARCH=$(shell bash -c "ldd `which dpkg` | grep libc.so | sed 's:.*/lib/\(.*\)/libc.*:\1:g'")
 
-LIBS = -L /opt/ros/kinetic/lib/$(ARCH)/ -lopencv_core3 -lopencv_objdetect3 -lopencv_tracking3 -lopencv_videoio3 -lopencv_imgproc3 -lopencv_core3 -lopencv_calib3d3 -lopencv_core3 -lopencv_features2d3 -lopencv_flann3 -lopencv_highgui3 -lopencv_imgproc3 -lopencv_ml3 -lopencv_objdetect3 -lopencv_photo3 -lopencv_stitching3 -lopencv_superres3 -lopencv_video3 -lopencv_videostab3 -o csrt
+LIBS = -L /opt/ros/kinetic/lib/$(ARCH)/ -lgcov -lopencv_core3 -lopencv_objdetect3 -lopencv_tracking3 -lopencv_videoio3 -lopencv_imgproc3 -lopencv_core3 -lopencv_calib3d3 -lopencv_core3 -lopencv_features2d3 -lopencv_flann3 -lopencv_highgui3 -lopencv_imgproc3 -lopencv_ml3 -lopencv_objdetect3 -lopencv_photo3 -lopencv_stitching3 -lopencv_superres3 -lopencv_video3 -lopencv_videostab3 -o csrt
 
 CC = g++
-#CFLAGS = --verbose -O0 -g3 -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
-CFLAGS = -march=native -O3 -g0 -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+
+# STEP 1
+CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-generate -fprofile-dir=/tmp -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+
+# STEP 2
+#CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-use -fprofile-dir=/tmp -fprofile-correction -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+
+# PROFIT!
 
 .PHONY: default all clean
 
