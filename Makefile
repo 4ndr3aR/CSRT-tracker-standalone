@@ -6,8 +6,11 @@ LIBS = -L /opt/ros/kinetic/lib/$(ARCH)/ -lgcov -lopencv_core3 -lopencv_objdetect
 
 CC = g++
 
+# STEP 0
+CFLAGS = -std=c++14 -march=native -O0 -g3 -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+
 # STEP 1
-CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-generate -fprofile-dir=/tmp -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+#CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-generate -fprofile-dir=/tmp -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
 
 # STEP 2
 #CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-use -fprofile-dir=/tmp -fprofile-correction -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/

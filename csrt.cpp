@@ -33,6 +33,7 @@ int main(int argc, char** argv)
     bool show_images   = false;
     bool save_video    = true;
     bool resize_imshow = false;
+    bool debug         = true;
 
     // show help
     if (argc<2) {
@@ -110,7 +111,7 @@ int main(int argc, char** argv)
             tracker->setInitialMask(mask);
         }
         else {
-            std::cout << "Number of ground-truth elements is not 4 or 8." << std::endl;
+            cout << "Number of ground-truth elements is not 4 or 8." << endl;
         }
 
     }
@@ -121,21 +122,22 @@ int main(int argc, char** argv)
 	        roi = selectROI("tracker", frame, true, false);
 		// ./csrt ../blob-tracking/src/media/boat-test-15secs-Drone-flight-207_-flight-over-the-ocean-off-Newport-Beach.mp4
 		// Roi: [42 x 42 from (547, 469)]
-		std::cout << "Roi: " << roi << std::endl;
+		cout << "Roi: " << roi << endl;
 	}
 	else
 	{
 		// second argument is a ROI, read it... (four numbers: x, y, w, h - let's write them in this way: x,y,w,h)
+		// ./csrt ../blob-tracking/src/media/boat-test-15secs-Drone-flight-207_-flight-over-the-ocean-off-Newport-Beach.mp4 547,469,42,42
 
 		std::vector<std::string> words;
 		splitstring(argv[2], ',', words);
-		std::cout << words[0] << " " << words[1] << " " << words[2] << " " << words[3] << std::endl;
+		cout << words[0] << " " << words[1] << " " << words[2] << " " << words[3] << endl;
 		roi.x = atoi(words[0].c_str());
 		roi.y = atoi(words[1].c_str());
 		roi.width = atoi(words[2].c_str());
 		roi.height = atoi(words[3].c_str());
 
-		std::cout << "Roi: " << roi << std::endl;
+		cout << "Roi: " << roi << endl;
 	}
     }
 
@@ -173,6 +175,9 @@ int main(int argc, char** argv)
         tick_counter += t2 - t1;
         frame_idx++;
 
+	if (debug && frame_idx % 100 == 0)
+		cout << "Processed frame: " << frame_idx << endl;
+
         if (!isfound) {
             cout << "The target has been lost...\n";
             waitKey(0);
@@ -193,7 +198,11 @@ int main(int argc, char** argv)
 			imshow("tracker", frame);
 	}
 	if (save_video)
+	{
+		// draw the tracked object and show the image
+		rectangle(frame, roi, Scalar(255, 0, 0), 5, 1);
 		video_out.write(frame);
+	}
 
         //quit on ESC button
         if (waitKey(1) == 27)break;
