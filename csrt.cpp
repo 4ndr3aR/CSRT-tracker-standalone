@@ -4,6 +4,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <iostream>
+#include <sstream>
 #include <cstring>
 #include <fstream>
 #include "samples_utility.hpp"
@@ -13,9 +14,23 @@
 using namespace std;
 using namespace cv;
 
+void splitstring (const std::string &str, char separator, std::vector<std::string> &vec)
+{
+        std::string word;
+        std::stringstream stream (str);
+
+        vec.clear();
+
+        while (std::getline (stream, word, separator))
+        {
+                vec.push_back (word);
+        }
+}
+
+
 int main(int argc, char** argv)
 {
-    bool show_images   = true;
+    bool show_images   = false;
     bool save_video    = true;
     bool resize_imshow = false;
 
@@ -49,9 +64,9 @@ int main(int argc, char** argv)
 
     // target bounding box
     Rect2d roi;
-    if (argc > 2) {
+    if (argc > 3) {
         // read first line of ground-truth file
-        std::string groundtruthPath = argv[2];
+        std::string groundtruthPath = argv[3];
         std::ifstream gtIfstream(groundtruthPath.c_str());
         std::string gtLine;
         getline(gtIfstream, gtLine);
@@ -100,8 +115,28 @@ int main(int argc, char** argv)
 
     }
     else {
-        // second argument is not given - user selects target
-        roi = selectROI("tracker", frame, true, false);
+	if (argc == 2)
+	{
+		// second argument is not given - user selects target
+	        roi = selectROI("tracker", frame, true, false);
+		// ./csrt ../blob-tracking/src/media/boat-test-15secs-Drone-flight-207_-flight-over-the-ocean-off-Newport-Beach.mp4
+		// Roi: [42 x 42 from (547, 469)]
+		std::cout << "Roi: " << roi << std::endl;
+	}
+	else
+	{
+		// second argument is a ROI, read it... (four numbers: x, y, w, h - let's write them in this way: x,y,w,h)
+
+		std::vector<std::string> words;
+		splitstring(argv[2], ',', words);
+		std::cout << words[0] << " " << words[1] << " " << words[2] << " " << words[3] << std::endl;
+		roi.x = atoi(words[0].c_str());
+		roi.y = atoi(words[1].c_str());
+		roi.width = atoi(words[2].c_str());
+		roi.height = atoi(words[3].c_str());
+
+		std::cout << "Roi: " << roi << std::endl;
+	}
     }
 
     //quit if ROI was not selected
