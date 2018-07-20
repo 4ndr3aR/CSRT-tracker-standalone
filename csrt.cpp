@@ -31,7 +31,7 @@ void splitstring (const std::string &str, char separator, std::vector<std::strin
 int main(int argc, char** argv)
 {
     bool show_images   = false;
-    bool save_video    = true;
+    bool save_video    = false;
     bool resize_imshow = false;
     bool debug         = true;
 

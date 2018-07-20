@@ -2,18 +2,28 @@ TARGET = csrt
 
 ARCH=$(shell bash -c "ldd `which dpkg` | grep libc.so | sed 's:.*/lib/\(.*\)/libc.*:\1:g'")
 
-LIBS = -L /opt/ros/kinetic/lib/$(ARCH)/ -lgcov -lopencv_core3 -lopencv_objdetect3 -lopencv_tracking3 -lopencv_videoio3 -lopencv_imgproc3 -lopencv_core3 -lopencv_calib3d3 -lopencv_core3 -lopencv_features2d3 -lopencv_flann3 -lopencv_highgui3 -lopencv_imgproc3 -lopencv_ml3 -lopencv_objdetect3 -lopencv_photo3 -lopencv_stitching3 -lopencv_superres3 -lopencv_video3 -lopencv_videostab3 -o csrt
+# ENABLE THESE FOR CUSTOM OPENCV INSTALL
+OPENCV_INC="/home/pelan/opencv/opencv-3.4.2-install/include/"
+OPENCV_LIBS="/home/pelan/opencv/opencv-3.4.2-install/lib/"
+LIBS = -lopencv_core -lopencv_objdetect -lopencv_tracking -lopencv_videoio -lopencv_imgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_ml -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_video -lopencv_videostab -o csrt
+
+# ENABLE THESE TO USE STANDARD ROS OPENCV INSTALL
+#OPENCV_INC="/opt/ros/kinetic/include/opencv-3.3.1-dev/"
+#OPENCV_LIBS="/opt/ros/kinetic/lib/$(ARCH)/"
+#LIBS = -lopencv_core3 -lopencv_objdetect3 -lopencv_tracking3 -lopencv_videoio3 -lopencv_imgproc3 -lopencv_calib3d3 -lopencv_features2d3 -lopencv_flann3 -lopencv_highgui3 -lopencv_ml3 -lopencv_photo3 -lopencv_stitching3 -lopencv_superres3 -lopencv_video3 -lopencv_videostab3 -o csrt
+
+LIB_COMMON = -L $(OPENCV_LIBS) -lgcov
 
 CC = g++
 
 # STEP 0
-CFLAGS = -std=c++14 -march=native -O0 -g3 -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+#CFLAGS = -std=c++14 -march=native -O0 -g3 -Wall -I . -I $(OPENCV_INC)
 
 # STEP 1
-#CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-generate -fprofile-dir=/tmp -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-generate -fprofile-dir=/tmp -Wall -I . -I $(OPENCV_INC)
 
 # STEP 2
-#CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-use -fprofile-dir=/tmp -fprofile-correction -Wall -I . -I /opt/ros/kinetic/include/opencv-3.3.1-dev/
+#CFLAGS = -std=c++14 -march=native -O3 -g0 -fprofile-use -fprofile-dir=/tmp -fprofile-correction -Wall -I . -I $(OPENCV_INC)
 
 # PROFIT!
 
@@ -31,7 +41,7 @@ HEADERS = $(wildcard *.h)
 .PRECIOUS: $(TARGET) $(OBJECTS)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
+	$(CC) $(OBJECTS) -Wall $(LIB_COMMON) $(LIBS) -o $@
 
 clean:
 	-rm -f *.o
