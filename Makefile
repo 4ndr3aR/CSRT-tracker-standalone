@@ -3,8 +3,8 @@ TARGET = csrt
 ARCH=$(shell bash -c "ldd `which dpkg` | grep libc.so | sed 's:.*/lib/\(.*\)/libc.*:\1:g'")
 
 # ENABLE THESE FOR CUSTOM OPENCV INSTALL
-OPENCV_INC="/home/pelan/opencv/opencv-3.4.2-install/include/"
-OPENCV_LIBS="/home/pelan/opencv/opencv-3.4.2-install/lib/"
+OPENCV_INC="/usr/include/opencv4/"
+OPENCV_LIBS="/usr/lib/x86_64-linux-gnu/"
 LIBS = -lopencv_core -lopencv_objdetect -lopencv_tracking -lopencv_videoio -lopencv_imgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_highgui -lopencv_ml -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_video -lopencv_videostab -o csrt
 
 # ENABLE THESE TO USE STANDARD ROS OPENCV INSTALL

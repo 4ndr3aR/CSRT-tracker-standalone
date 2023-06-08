@@ -31,7 +31,7 @@ void splitstring (const std::string &str, char separator, std::vector<std::strin
 int main(int argc, char** argv)
 {
     bool show_images   = false;
-    bool save_video    = false;
+    bool save_video    = true;
     bool resize_imshow = false;
     bool debug         = true;
 
@@ -151,11 +151,16 @@ int main(int argc, char** argv)
     int64 t2 = cv::getTickCount();
     int64 tick_counter = t2 - t1;
 
+    //auto fourcc = VideoWriter::fourcc('X','2','6','4'); // looks slower, even on a system with hardware h264 encoding enabled in OpenCV
+    auto fourcc = VideoWriter::fourcc('X','V','I','D');   // 27 FPS for XVID vs. 20 FPS for H264 on YOLOv4 video/test.mp4
+
     Mat imshow_mat;
 
-    int frame_width  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
-    int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-    VideoWriter video_out("/tmp/out.avi", CV_FOURCC('X','2','6','4') , 30, Size(frame_width, frame_height), true);
+    int frame_width  = cap.get(CAP_PROP_FRAME_WIDTH);
+    int frame_height = cap.get(CAP_PROP_FRAME_HEIGHT);
+    int video_fps = 30;
+
+    VideoWriter video_out("/tmp/out.avi", fourcc, video_fps, Size(frame_width, frame_height), true);
 
     // do the tracking
     printf("Start the tracking process, press ESC to quit.\n");
